@@ -10,7 +10,7 @@ RMSE <- function(rating, est_rating){
 #Stochastic Gradient Descent
 # a function returns a list containing factorized matrices p and q, training and testing RMSEs.
 gradesc <- function(f = 10, 
-                    lambda = 0.3,lrate = 0.01, max.iter, stopping.deriv = 0.01,
+                    lambda = 0.3, lrate = 0.01, max.iter, stopping.deriv = 0.01,
                     data, train, test){
   set.seed(0)
   #random assign value to matrix p and q
