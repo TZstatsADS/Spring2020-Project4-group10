@@ -92,6 +92,8 @@ gradPMF <- function(D = 5, data, data.train, data.test, sigma = .5,
   }
   # train_RMSE <- tail(train_RMSE, length(train_RMSE)-1)
   # test_RMSE <- tail(test_RMSE, length(test_RMSE)-1)
+  colnames(U) <- as.character(1:u)
+  colnames(V) <- levels(as.factor(data$movieId))
   return(list(U = U, V = V, train_RMSE = train_RMSE, test_RMSE = test_RMSE))
 }
 
