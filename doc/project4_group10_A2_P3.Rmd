@@ -220,16 +220,19 @@ model_A2_p3<-P3(data.train, V = output$V, kernel = "Gaussian",lambda = 1)
 t1<-Sys.time()
 
 prediction_A2_P3<-predict.P3(data.new = data.test, model_A2_p3, V = output$V)
+prediction_A2_P3_train<-predict.P3(data.new = data.train, model_A2_p3, V = output$V)
 
 t2<-Sys.time()
 
 test_RMSE_A2_P3<-sqrt(mean((data.test$rating-prediction_A2_P3)^2))
+train_RMSE_A2_P3<-sqrt(mean((data.train$rating-prediction_A2_P3_train)^2))
 
 ##Time for build the model is about 3.124177 mins
 t1-t0
 ##Time for modeling and prediction is about 3.150982 mins
 t2-t0
 
+save(train_RMSE_A2_P3,file = "../output/train_RMSE_A2_P3.RData")
 save(test_RMSE_A2_P3,file = "../output/test_RMSE_A2_P3.RData")
 ```
 
