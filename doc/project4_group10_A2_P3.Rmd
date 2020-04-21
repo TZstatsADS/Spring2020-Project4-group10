@@ -42,7 +42,7 @@ parameters <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U, lra
 ```
 
 Do cross validation
-```{r eval=FALSE}
+```{r, eval=FALSE}
 cv_train_rmse <- matrix(NA, dim(parameters)[1], 20)
 cv_test_rmse <- matrix(NA, dim(parameters)[1], 20)
 
@@ -147,7 +147,7 @@ source("../lib/KNN.R")
 
 During the former tunning, we have shrinked the parameters to 6 groups. In this part, we added an additional K to the combination, K also has two choices.
 
-```{r}
+```{r, eval=FALSE}
 #parameters
 t_D <- c(5, 10)
 t_sigma_V <- c(.1, .5)
@@ -159,7 +159,7 @@ par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,K = t_K)
 ```
 
 Do cross validation
-```{r eval=FALSE}
+```{r, eval=FALSE}
 cv_train_rmse <- c()
 cv_test_rmse <- c()
 
@@ -186,7 +186,7 @@ rmse_P2<-cbind(par,cv_P2_train_rmse,cv_P2_test_rmse)
 save(rmse_P2, file = "../output/RMSE_A2_P2.RData")
 ```
 
-Then we use these result to choose the best model for A2+P3 model based on the train RMSE and test RMSE we have.
+Then we use these result to choose the best model for A2+P2 model based on the train RMSE and test RMSE we have.
 ```{r}
 load("../output/RMSE_A2_P2.RData")
 
@@ -208,7 +208,7 @@ g
 ##### Step 3.2.3 Output the model, the test RMSE and the rating matrix
 The best group of parameters is $D = 5,\ \sigma_v = 0.5,\ \sigma_u = 1,\ K = 30$. Then we use these to Calculate the user-movie prediction matrix and see the RMSE on the train and test set.
 
-```{r}
+```{r, eval = FALSE}
 t0<-Sys.time()
 
 r <- P2_KNN(data = data, data.train, data.test, K=30, D=5, sigma_V = 0.5, sigma_U = 1)
@@ -253,7 +253,7 @@ par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,lambda = t_
 ```
 
 Do cross validation
-```{r eval=FALSE}
+```{r, eval=FALSE}
 cv_train_rmse <- c()
 cv_test_rmse <- c()
 
@@ -304,7 +304,7 @@ g
 ##### Step 3.3.3 Output the model, the test RMSE and the rating matrix
 The best group of parameters is $D = 5,\ \sigma_v = 0.1,\ \sigma_u = 0.5,\ \lambda = 1$ and use the Gaussian kernel. Then we use these to build the model and to see the RMSE on the test set.
 
-```{r eval=FALSE}
+```{r, eval=FALSE}
 t0<-Sys.time()
 
 output<-gradPMF(D = 5, data, data.train, data.test, sigma = .5,sigma_V = .1, sigma_U = .5, max.iter = 200, lrate = 0.0005, stopping.deriv = 0.01)
@@ -334,7 +334,7 @@ save(test_RMSE_A2_P3,file = "../output/test_RMSE_A2_P3.RData")
 ```
 
 Calculate the user-movie prediction matrix.
-```{r eval = FALSE}
+```{r, eval = FALSE}
 data.pred<-expand.grid(userId = c(1:610),movieId = sort(unique(data$movieId)))
 
 t4<-Sys.time()
@@ -378,11 +378,14 @@ We test these two model with data.test, the rmse is being showed below.
 So we can conclude that:
 
 From RMSE perspective, Probabilistic Matrix Factorization with Kernel Ridge Regression performs better than Probabilistic Matrix Factorization with KNN.
-```{r}
+```{r, echo=FALSE}
 compare.graph <- COMP %>% 
   ggplot(aes(x = mod, y = rmse, fill = train_test))+
   geom_bar(stat='identity',position="dodge",width=0.3)+
   theme_light()
 compare.graph
 ```
+
+We also caculate the run time of training + predicting + Rmse calculating, where for A2 + P2 is 7.615576 mins and for A2 + P3 is 8.444076 mins. But we think that comparing this time is meaningless, because we use different matrices to implement the given algorithm.
+
 
