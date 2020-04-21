@@ -19,10 +19,8 @@ expand_r <- function(data, data.train){
   a <- unique(data$userId)
   b <- as.integer(levels(as.factor(data$movieId)))
   c <- expand.grid("movieId" = b, "userId" = a) %>% select(c(userId, movieId))
-  
   new <- left_join(c, data.train, by = c("userId", "movieId")) %>% select(-timestamp)
   new[is.na(new)] <- 0
-  
   return(new)
 }
 
@@ -40,7 +38,7 @@ train_idx <- setdiff(1:nrow(data), test_idx)
 data.train <- data[train_idx,]
 data.test <- data[test_idx,]
 
-P2_KNN <- function(data = data, data.train, data.test,K, D=10, sigma_V = 1, sigma_U = 0.1){
+P2_KNN <- function(data = data, data.train, data.test,K, D=5, sigma_V = 0.5, sigma_U = 1){
   grad <- gradPMF(D, data, data.train, data.test,sigma_V, sigma_U)
   v <- grad$V
   u <- grad$U
@@ -51,22 +49,35 @@ P2_KNN <- function(data = data, data.train, data.test,K, D=10, sigma_V = 1, sigm
   for (i in 1:nrow(dist)){
     d[i,which.maxn(dist[i,], K)]=1
   }
-  R <- (A%*%d)/K
-  # r <- expand_r(data, data.train) %>% pivot_wider(names_from = movieId, values_from = rating) %>% 
-  #   select(-userId) %>% as.matrix()
-  # r_new <- r/r
-  # C <- matrix(1,nrow=610,9724)
-  # for (i in 1:nrow(C)){
-  #   C[i,which(r_new[i,]==1)]=0
-  # }
-  # hi <- R*C
-  # knn_pred <- (R*C)+r
+  r <- expand_r(data, data.train) %>% pivot_wider(names_from = movieId, values_from = rating) %>% 
+    select(-userId) %>% as.matrix()
+  r_new <- r/r
+  C <- matrix(1,nrow=610,9724)
+  for (i in 1:nrow(C)){
+    C[i,which(r_new[i,]==1)]=0
+  }
+  f <- (A*C)+r
+  R <- (f%*%d)/K
   colnames(R) <- levels(as.factor(data$movieId))
   train_RMSE <- RMSE(data.train,R)
   test_RMSE <- RMSE(data.test,R)
   
+  
   return(list(pred=R,train_RMSE=train_RMSE,test_RMSE=test_RMSE))
 }
+# t3<-Sys.time()
+# p <- P2_KNN(data = data, data.train, data.test,K=30, D=5, sigma_V = 0.5, sigma_U = 1)
+# t4<-Sys.time()
+# t4-t3
+# 
+# p$train_RMSE
+# p$test_RMSE
+# rating <- p$pred
+# tr <- p$train_RMSE
+# te <- p$test_RMSE
+# save(rating,file="../output/ratings_A2_P2.RData")
+# save(tr,file="../output/train_RMSE_A2_P2.RData")
+# save(te,file="../output/test_RMSE_A2_P2.RData")
 
 
 cv_P2.function <- function(data, dat_train, K, D, sigma_V, sigma_U, k){
@@ -128,11 +139,11 @@ for(i in 1:4){
   
 }
 
-cv_A2_P3_train_rmse <- cv_train_rmse
-cv_A2_P3_test_rmse <- cv_test_rmse
+cv_A2_P2_train_rmse <- cv_train_rmse
+cv_A2_P2_test_rmse <- cv_test_rmse
 
-save(cv_A2_P3_train_rmse,"../output/cv_A2+P3_train_1-4_rmse.RData")
-save(cv_A2_P3_test_rmse,"../output/cv_A2+P3_test_1-4_rmse.RData")
+save(cv_A2_P2_train_rmse,"../output/cv_A2+P3_train_1-4_rmse.RData")
+save(cv_A2_P2_test_rmse,"../output/cv_A2+P3_test_1-4_rmse.RData")
 
 ##############################################################################
 #Xinwen

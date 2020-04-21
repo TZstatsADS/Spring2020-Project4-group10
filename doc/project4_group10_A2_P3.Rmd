@@ -137,6 +137,101 @@ cat("We fix the learning rate to be ", pre_ft_lrate, ".", sep = "")
 
 
 ### Step 3 Postprocessing
+#### Step 3.2 P3:Postprocessing with KNN
+##### Step3.2.1 load the function for P2
+```{r}
+source("../lib/KNN.R")
+```
+
+##### Step 3.2.2 Tunning for A2+P2
+
+During the former tunning, we have shrinked the parameters to 8 groups. In this part, we added an addidition K to the combination, K also has two choices.
+
+```{r}
+#tunes parameters
+t_D <- c(5, 10)
+t_sigma_V <- c(.1, .5)
+t_sigma_U <- c(.5, 1)
+t_K <- c(20,30)
+
+#build the data.frame to show all possible combination of parameters
+par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,K = t_K)
+```
+
+Do cross validation
+```{r eval=FALSE}
+cv_train_rmse <- c()
+cv_test_rmse <- c()
+
+for(i in dim(par)[1]){
+  tmp_D <- par$D[i]
+  tmp_sigma_V <- par$sigma_V[i]
+  tmp_sigma_U <- par$sigma_U[i]
+  tmp_k  <- par$K[i]
+  
+  ret <- cv_P2.function(data, data.train, K = 5, D = tmp_D, 
+                        sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U, k = tmp_k)
+
+  cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
+  cv_train_rmse[i] <- ret$mean_train_rmse
+  cv_test_rmse[i] <- ret$mean_test_rmse
+
+}
+
+cv_P2_train_rmse <- cv_train_rmse
+cv_P2_test_rmse <- cv_test_rmse
+
+rmse_P2<-par%>%
+  mutate("train rmse" = cv_P2_train_rmse,
+         "test rmse" = cv_P2_test_rmse)
+
+save(rmse_P2, file = "../output/RMSE_A2_P2.RData")
+```
+
+Then we use these result to choose the best model for A2+P3 model based on the train RMSE and test RMSE we have.
+```{r}
+load("../output/RMSE_A2_P2.RData")
+
+best_rmse_P2<-rmse_P2%>%
+  arrange(`test rmse`,`train rmse`)
+head(best_rmse_P2)
+
+g<-ggplot(best_rmse_P2)+
+  geom_point(aes(x = 1:nrow(best_rmse_P2),y = `test rmse`),col = "red")+
+  geom_point(aes(x = 1:nrow(best_rmse_P2),y = `train rmse`),col = "blue")+
+  labs(x = "Combination NO.",
+       y = "RMSE",
+       title = "Test RMSE and Train RMSE for different parameters combination")+
+  theme_bw()
+g
+  
+```
+
+##### Step 3.2.3 Output the model, the test RMSE and the rating matrix
+The best group of parameters is $D = 5,\ \sigma_v = 0.5,\ \sigma_u = 1,\ K = 30$. Then we use these to Calculate the user-movie prediction matrix and see the RMSE on the train and test set.
+
+```{r}
+t0<-Sys.time()
+
+r <- P2_KNN(data = data, data.train, data.test, K=30, D=5, sigma_V = 0.5, sigma_U = 1)
+
+t1<-Sys.time()
+
+ratings_A2_P2<-r$pred
+test_RMSE_A2_P2 <- r$test_RMSE
+train_RMSE_A2_P2 <- r$train_RMSE
+##Run time for KNN model to build the rating matrix and get the RMSEs is about 7.615576 mins
+t1-t0
+
+#part of the rating matrix
+ratings_A2_P2[1:5,1:5]
+
+save(train_RMSE_A2_P2,file = "../output/train_RMSE_A2_P2.RData")
+save(test_RMSE_A2_P2,file = "../output/test_RMSE_A2_P2.RData")
+save(ratings_A2_P2,file = "../output/ratings_A2_P2.RData")
+```
+
+
 #### Step 3.2 P3:Postprocessing with kernel ridge regression
 ##### Step3.2.1 load the function for P3
 ```{r}
@@ -145,7 +240,7 @@ source("../lib/krr_cv.R")
 
 ##### Step 3.2.2 Tunning for A2+P3
 
-During the former tunning, we have shrinked the parameters to 8 groups. In the part, we added two tunning parameters "$\lambda$" and "Kernel Type" to the combination, each one has two possible choices.
+During the former tunning, we have shrinked the parameters to 8 groups. In this part, we added two tunning parameters "$\lambda$" and "Kernel Type" to the combination, each one has two possible choices.
 
 ```{r}
 #tunes parameters
