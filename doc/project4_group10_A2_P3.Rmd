@@ -145,14 +145,14 @@ source("../lib/KNN.R")
 
 ##### Step 3.2.2 Tunning for A2+P2
 
-During the former tunning, we have shrinked the parameters to 8 groups. In this part, we added an addidition K to the combination, K also has two choices.
+During the former tunning, we have shrinked the parameters to 6 groups. In this part, we added an additional K to the combination, K also has two choices.
 
 ```{r}
-#tunes parameters
+#parameters
 t_D <- c(5, 10)
 t_sigma_V <- c(.1, .5)
 t_sigma_U <- c(.5, 1)
-t_K <- c(20,30)
+t_K <- c(20, 30)
 
 #build the data.frame to show all possible combination of parameters
 par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,K = t_K)
@@ -181,9 +181,7 @@ for(i in dim(par)[1]){
 cv_P2_train_rmse <- cv_train_rmse
 cv_P2_test_rmse <- cv_test_rmse
 
-rmse_P2<-par%>%
-  mutate("train rmse" = cv_P2_train_rmse,
-         "test rmse" = cv_P2_test_rmse)
+rmse_P2<-cbind(par,cv_P2_train_rmse,cv_P2_test_rmse)
 
 save(rmse_P2, file = "../output/RMSE_A2_P2.RData")
 ```
@@ -192,13 +190,13 @@ Then we use these result to choose the best model for A2+P3 model based on the t
 ```{r}
 load("../output/RMSE_A2_P2.RData")
 
-best_rmse_P2<-rmse_P2%>%
-  arrange(`test rmse`,`train rmse`)
+best_rmse_P2<-RMSE_A2_P2%>%data.frame()%>%
+  arrange(train_RMSE_A2_P2,test_RMSE_A2_P2)
 head(best_rmse_P2)
 
 g<-ggplot(best_rmse_P2)+
-  geom_point(aes(x = 1:nrow(best_rmse_P2),y = `test rmse`),col = "red")+
-  geom_point(aes(x = 1:nrow(best_rmse_P2),y = `train rmse`),col = "blue")+
+  geom_point(aes(x = 1:nrow(best_rmse_P2),y = test_RMSE_A2_P2),col = "red")+
+  geom_point(aes(x = 1:nrow(best_rmse_P2),y = train_RMSE_A2_P2),col = "blue")+
   labs(x = "Combination NO.",
        y = "RMSE",
        title = "Test RMSE and Train RMSE for different parameters combination")+
@@ -240,7 +238,7 @@ source("../lib/krr_cv.R")
 
 ##### Step 3.2.2 Tunning for A2+P3
 
-During the former tunning, we have shrinked the parameters to 8 groups. In this part, we added two tunning parameters "$\lambda$" and "Kernel Type" to the combination, each one has two possible choices.
+During the former tunning, we have shrinked the parameters to 6 groups. In this part, we added two tunning parameters "$\lambda$" and "Kernel Type" to the combination, each one has two possible choices.
 
 ```{r}
 #tunes parameters

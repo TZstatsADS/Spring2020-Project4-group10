@@ -106,114 +106,36 @@ cv_P2.function <- function(data, dat_train, K, D, sigma_V, sigma_U, k){
 
 ################################################################################
 #tunes parameters
-
-t_D <- c(5, 10)
-t_sigma_V <- c(.1, .5)
-t_sigma_U <- c(.5, 1)
-t_K <- c(20,30)
-par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,K = t_K)
-dim(par)[1]
-
-#cross validation
-cv_train_rmse <- c()
-cv_test_rmse <- c()
-
-##################################################################################
-#上面这些正常跑就行
-
-##############################################################################
-#Ruozhou
-for(i in 1:4){
-  tmp_D <- par$D[i]
-  tmp_sigma_V <- par$sigma_V[i]
-  tmp_sigma_U <- par$sigma_U[i]
-  tmp_k  <- par$K[i]
-  
-  ret <- cv_P2.function(data, data.train, K = 5,
-                        D = tmp_D, sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U,
-                        k = tmp_k)
-
-  cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
-  cv_train_rmse[i] <- ret$mean_train_rmse
-  cv_test_rmse[i] <- ret$mean_test_rmse
-  
-}
-
-cv_A2_P2_train_rmse <- cv_train_rmse
-cv_A2_P2_test_rmse <- cv_test_rmse
-
-save(cv_A2_P2_train_rmse,"../output/cv_A2+P3_train_1-4_rmse.RData")
-save(cv_A2_P2_test_rmse,"../output/cv_A2+P3_test_1-4_rmse.RData")
-
-##############################################################################
-#Xinwen
-for(i in 5:8){
-  tmp_D <- par$D[i]
-  tmp_sigma_V <- par$sigma_V[i]
-  tmp_sigma_U <- par$sigma_U[i]
-  tmp_k  <- par$K[i]
-  
-  ret <- cv_P2.function(data, data.train, K = 5,
-                        D = tmp_D, sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U,
-                        k = tmp_k)
-  
-  cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
-  cv_train_rmse[i] <- ret$mean_train_rmse
-  cv_test_rmse[i] <- ret$mean_test_rmse
-  
-}
-
-cv_A2_P3_train_rmse <- cv_train_rmse
-cv_A2_P3_test_rmse <- cv_test_rmse
-
-save(cv_A2_P3_train_rmse,"../output/cv_A2_P2_train_5-8_rmse.RData")
-save(cv_A2_P3_test_rmse,"../output/cv_A2_P2_test_5-8_rmse.RData")
-
-##############################################################################
-#Xiyao
-for(i in 9:12){
-  tmp_D <- par$D[i]
-  tmp_sigma_V <- par$sigma_V[i]
-  tmp_sigma_U <- par$sigma_U[i]
-  tmp_k  <- par$K[i]
-  
-  ret <- cv_P2.function(data, data.train, K = 5,
-                        D = tmp_D, sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U,
-                        k = tmp_k)
-  
-  cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
-  cv_train_rmse[i] <- ret$mean_train_rmse
-  cv_test_rmse[i] <- ret$mean_test_rmse
-  
-}
-
-cv_A2_P3_train_rmse <- cv_train_rmse
-cv_A2_P3_test_rmse <- cv_test_rmse
-
-save(cv_A2_P3_train_rmse,"../output/cv_A2_P2_train_9-12_rmse.RData")
-save(cv_A2_P3_test_rmse,"../output/cv_A2_P2_test_9-12_rmse.RData")
-
-##############################################################################
-#Kexin
-for(i in 13:16){
-  tmp_D <- par$D[i]
-  tmp_sigma_V <- par$sigma_V[i]
-  tmp_sigma_U <- par$sigma_U[i]
-  tmp_k  <- par$K[i]
-  
-  ret <- cv_P2.function(data, data.train, K = 5,
-                        D = tmp_D, sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U,
-                        k = tmp_k)
-  
-  cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
-  cv_train_rmse[i] <- ret$mean_train_rmse
-  cv_test_rmse[i] <- ret$mean_test_rmse
-  
-}
-
-cv_A2_P2_train_rmse <- cv_train_rmse
-cv_A2_P2_test_rmse <- cv_test_rmse
-
-save(cv_A2_P2_train_rmse, file="../output/cv_A2_P2_train_13-16_rmse.RData")
-save(cv_A2_P2_test_rmse, file="../output/cv_A2_P2_test_13-16_rmse.RData")
-
+# 
+# t_D <- c(5, 10)
+# t_sigma_V <- c(.1, .5)
+# t_sigma_U <- c(.5, 1)
+# t_K <- c(20,30)
+# par <- expand.grid(D = t_D, sigma_V = t_sigma_V, sigma_U = t_sigma_U,K = t_K)
+# dim(par)[1]
+# 
+# #cross validation
+# cv_train_rmse <- c()
+# cv_test_rmse <- c()
+# 
+# for(i in dim(par)[1]){
+#   tmp_D <- par$D[i]
+#   tmp_sigma_V <- par$sigma_V[i]
+#   tmp_sigma_U <- par$sigma_U[i]
+#   tmp_k  <- par$K[i]
+#   
+#   ret <- cv_P2.function(data, data.train, K = 5, D = tmp_D, 
+#                         sigma_V = tmp_sigma_V, sigma_U = tmp_sigma_U, k = tmp_k)
+#   
+#   cat("--------------------------------------- No.",i,"Done --------------------------------------------", "\n")
+#   cv_train_rmse[i] <- ret$mean_train_rmse
+#   cv_test_rmse[i] <- ret$mean_test_rmse
+#   
+# }
+# 
+# cv_P2_train_rmse <- cv_train_rmse
+# cv_P2_test_rmse <- cv_test_rmse
+# 
+# rmse_P2<-cbind(par,cv_P2_train_rmse,cv_P2_test_rmse)
+# 
+# save(rmse_P2, file = "../output/RMSE_A2_P2.RData")
