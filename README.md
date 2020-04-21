@@ -23,7 +23,7 @@ We found....(final RMSE info here)
 + Xinwen Miao: Collaborated with Xiyao Yan on implementing and evaluating the kernel ridge regression post-processing method.
 + Colleen Su: Implemented and evaluated the k nearest neighbors post-processing method. Used this model for cross-validation and final evaluation. 
 + Xiyao Yan: Collaborated with Xinwen Miao on implementing and evaluating the kernel ridge regression post-processing method.
-+ Ruo zhou Zhang: Completed final Matrix Factorization implementation with paramter tuning and cross validation. 
++ Ruo zhou Zhang: Completed Probabilistic Matrix Factorization implementation with paramter tuning and cross validation. 
 + Jasmin Flack: Collaborated with Colleen Su on implementing and evaluating the k nearest neighbors post-processing method. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
