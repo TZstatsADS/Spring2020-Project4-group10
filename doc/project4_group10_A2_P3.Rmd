@@ -230,13 +230,13 @@ save(ratings_A2_P2,file = "../output/ratings_A2_P2.RData")
 ```
 
 
-#### Step 3.2 P3:Postprocessing with kernel ridge regression
-##### Step3.2.1 load the function for P3
+#### Step 3.3 P3:Postprocessing with kernel ridge regression
+##### Step 3.3.1 load the function for P3
 ```{r}
 source("../lib/krr_cv.R")
 ```
 
-##### Step 3.2.2 Tunning for A2+P3
+##### Step 3.3.2 Tunning for A2+P3
 
 During the former tunning, we have shrinked the parameters to 6 groups. In this part, we added two tunning parameters "$\lambda$" and "Kernel Type" to the combination, each one has two possible choices.
 
@@ -301,7 +301,7 @@ g
 ```
 
 
-##### Step 3.2.3 Output the model, the test RMSE and the rating matrix
+##### Step 3.3.3 Output the model, the test RMSE and the rating matrix
 The best group of parameters is $D = 5,\ \sigma_v = 0.1,\ \sigma_u = 0.5,\ \lambda = 1$ and use the Gaussian kernel. Then we use these to build the model and to see the RMSE on the test set.
 
 ```{r}
@@ -349,3 +349,32 @@ ratings_A2_P3[1:5,1:5]
 
 save(ratings_A2_P3,file = "../output/ratings_A2_P3.RData")
 ```
+
+### Step 4 Comparation
+
+```{r, echo=FALSE}
+load("../output/test_RMSE_A2_P3.RData")
+load("../output/train_RMSE_A2_P3.RData")
+load("../output/RMSE_A2_P3.RData")
+load("../output/test_RMSE_A2_P2.RData")
+load("../output/train_RMSE_A2_P2.RData")
+load("../output/RMSE_A2_P2.RData")
+values <- c(tr,te,train_RMSE_A2_P3,test_RMSE_A2_P3)
+rmses <- c(rep(c("Train_RMSE", "Test_RMSE"), 2))
+mod <- c(rep("A2 + P2", 2), rep("A2 + P3", 2))
+COMP <- data.frame(mod = mod, train_test = rmses, rmse = values)
+```
+
+We test these two model with data.test, the rmse is being showed below.
+
+So we can conclude that:
+
+From RMSE perspective, Probabilistic Matrix Factorization with Kernel Ridge Regression performs better than Probabilistic Matrix Factorization with KNN.
+```{r}
+compare.graph <- COMP %>% 
+  ggplot(aes(x = mod, y = rmse, fill = train_test))+
+  geom_bar(stat='identity',position="dodge",width=0.3)+
+  theme_light()
+compare.graph
+```
+
